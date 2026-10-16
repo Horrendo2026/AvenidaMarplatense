@@ -1,14 +1,17 @@
 // Bot de Discord + servidor web de Avenida Mar Platense.
 // - Lee el canal de anuncios y los expone en /api/anuncios
 // - Expone miembros y conectados del server en /api/discord
+// - Recibe cuánta gente hay en cada servidor del juego de Roblox y lo expone en /api/roblox
 // - Sirve la página (carpeta web/)
 require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const { Client, GatewayIntentBits, Partials, Events } = require('discord.js');
 
-const { DISCORD_TOKEN, GUILD_ID, ANUNCIOS_CHANNEL_ID } = process.env;
+const { DISCORD_TOKEN, GUILD_ID, ANUNCIOS_CHANNEL_ID, ROBLOX_KEY } = process.env;
 const PORT = process.env.PORT || 3000;
+// Canal al que lleva el botón "Ver en Discord" de cada anuncio
+const CANAL_VER_EN_DISCORD = process.env.VER_EN_DISCORD_CANAL_ID || '1327811262503059476';
 const MAX_ANUNCIOS = 20;
 const REFRESCO_ANUNCIOS_MS = 30 * 60 * 1000; // los links de imágenes de Discord vencen, así que se renuevan cada 30 min
 const REFRESCO_STATS_MS = 5 * 60 * 1000;
@@ -36,7 +39,7 @@ function aAnuncio(msg) {
     imagenes,
     fecha: msg.createdAt.toISOString(),
     editado: msg.editedAt ? msg.editedAt.toISOString() : null,
-    link: msg.url,
+    link: `https://discord.com/channels/${msg.guildId}/${CANAL_VER_EN_DISCORD}`,
   };
 }
 
@@ -105,5 +108,40 @@ app.get('/api/discord', (req, res) => {
   if (!stats) return res.status(503).json({ error: 'El bot todavía no se conectó a Discord.' });
   res.json(stats);
 });
+// ---------- Roblox: jugadores en el juego ----------
+// Cada servidor del juego manda un "ping" cada 30 s con su cantidad de jugadores.
+// Un servidor que deja de avisar por más de 90 s se da por cerrado.
+const VENCE_SERVIDOR_MS = 90 * 1000;
+const servidores = new Map(); // jobId -> { jugadores, max, t }
+
+function servidoresActivos() {
+  const ahora = Date.now();
+  for (const [id, s] of servidores) if (ahora - s.t > VENCE_SERVIDOR_MS) servidores.delete(id);
+  return [...servidores.values()];
+}
+
+app.post('/api/roblox/ping', express.json({ limit: '2kb' }), (req, res) => {
+  if (!ROBLOX_KEY || req.get('x-avm-key') !== ROBLOX_KEY) return res.status(401).json({ error: 'Clave inválida' });
+  const { jobId, jugadores, max } = req.body || {};
+  if (typeof jobId !== 'string' || !jobId || jobId.length > 64) return res.status(400).json({ error: 'jobId inválido' });
+  if (!Number.isInteger(jugadores) || jugadores < 0 || jugadores > 700) return res.status(400).json({ error: 'jugadores inválido' });
+  if (jugadores === 0) servidores.delete(jobId); // el servidor se está cerrando
+  else if (servidores.has(jobId) || servidores.size < 500) {
+    servidores.set(jobId, { jugadores, max: Number.isInteger(max) ? max : null, t: Date.now() });
+  }
+  res.json({ ok: true });
+});
+
+app.get('/api/roblox', (req, res) => {
+  const activos = servidoresActivos();
+  res.json({
+    jugadores: activos.reduce((n, s) => n + s.jugadores, 0),
+    servidores: activos.length,
+    actualizado: new Date().toISOString(),
+  });
+});
+
+if (!ROBLOX_KEY) console.warn('[roblox] Falta ROBLOX_KEY en .env: el contador de jugadores no va a recibir datos.');
+
 app.use(express.static(path.join(__dirname, 'web')));
 app.listen(PORT, () => console.log(`[web] http://localhost:${PORT}`));
