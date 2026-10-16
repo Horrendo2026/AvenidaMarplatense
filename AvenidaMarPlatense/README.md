@@ -59,6 +59,32 @@ Si preferís alojar solo la página en Netlify, Vercel o GitHub Pages y el bot e
 var API = 'https://avm-bot.up.railway.app';
 ```
 
+## Comandos del bot
+
+Escribí `/ayuda` en Discord para ver la lista. Resumen:
+
+| Categoría | Comandos |
+|---|---|
+| General | `/ayuda` `/jugadores` `/servidor` `/usuario` `/avatar` `/normas` `/links` |
+| Roblox | `/verificar` `/desvincular` `/roblox` |
+| Moderación (solo staff) | `/warn` `/aislar` `/expulsar` `/banear` `/desbanear` `/historial` `/borrarsancion` `/limpiar` `/slowmode` |
+| Staff | `/decir` `/encuesta` `/sorteo` |
+
+Los comandos de moderación solo los ven quienes tienen el permiso de Discord correspondiente (Aislar miembros, Expulsar, Banear, etc.). Se puede ajustar en **Ajustes del servidor → Integraciones → AVM BOT**.
+
+Además:
+- **Estado en vivo**: el bot muestra "Jugando X en la ciudad" con la gente que hay en Roblox.
+- **Bienvenida y rol automático**: con `BIENVENIDA_CHANNEL_ID` y/o `AUTOROL_ID`. Requiere activar **Server Members Intent** en el portal (Bot → Privileged Gateway Intents).
+- **Sanciones**: quedan guardadas y se publican en `LOGS_CHANNEL_ID`.
+
+### Que no se borren los datos en Railway
+
+Las vinculaciones de Roblox, sanciones y sorteos se guardan en un archivo. En Railway hay que agregar un **Volume** al servicio (clic derecho en el servicio → **Attach Volume**) con *mount path* `/data`, y la variable `DATA_DIR=/data`. Sin eso, se borran en cada deploy.
+
+### Permisos del bot
+
+El rol del bot tiene que estar **por encima** de los roles que da (verificado, rol automático) y de los miembros que modera.
+
 ## Cómo publicar un anuncio
 
 Escribí en el canal de anuncios como siempre. Se puede usar el formato de Discord: **negrita**, *cursiva*, `código`, títulos con `#`, listas con `-`, links e imágenes adjuntas. La web muestra los últimos 20 mensajes y se actualiza sola cada 2 minutos.

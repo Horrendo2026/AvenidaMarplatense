@@ -3,10 +3,16 @@
 // - Expone miembros y conectados del server en /api/discord
 // - Recibe cuánta gente hay en cada servidor del juego de Roblox y lo expone en /api/roblox
 // - Sirve la página (carpeta web/)
+// - Comandos de barra, bienvenida, verificación con Roblox, moderación y sorteos (carpeta discord/)
 require('dotenv').config();
 const path = require('path');
 const express = require('express');
-const { Client, GatewayIntentBits, Partials, Events } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Events, ActivityType } = require('discord.js');
+const roblox = require('./roblox');
+const cfg = require('./discord/config');
+const comandos = require('./discord/comandos');
+const bienvenida = require('./discord/bienvenida');
+const sorteos = require('./discord/sorteos');
 
 const { DISCORD_TOKEN, GUILD_ID, ANUNCIOS_CHANNEL_ID, ROBLOX_KEY } = process.env;
 const PORT = process.env.PORT || 3000;
@@ -20,8 +26,14 @@ let anuncios = [];
 let stats = null;
 
 // ---------- Discord ----------
+// La bienvenida necesita el intent "Server Members" (hay que activarlo en el portal),
+// así que solo se pide si está configurada. Si no, el bot no podría ni conectarse.
+const usaBienvenida = Boolean(cfg.BIENVENIDA_CHANNEL_ID || cfg.AUTOROL_ID);
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+  intents: [
+    GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent,
+    ...(usaBienvenida ? [GatewayIntentBits.GuildMembers] : []),
+  ],
   partials: [Partials.Message, Partials.Channel],
 });
 
@@ -83,17 +95,46 @@ client.on(Events.MessageCreate, (m) => recargarPronto(m.channelId));
 client.on(Events.MessageUpdate, (_, m) => recargarPronto(m.channelId));
 client.on(Events.MessageDelete, (m) => recargarPronto(m.channelId));
 
+client.on(Events.InteractionCreate, comandos.manejar);
+if (usaBienvenida) client.on(Events.GuildMemberAdd, bienvenida.alEntrar);
+
+// Estado del bot: "Jugando 23 en la ciudad" o "Mirando avenidamarplatense.com"
+function actualizarEstado() {
+  const { jugadores, servidores } = roblox.resumen();
+  if (servidores) client.user.setActivity(`${jugadores} en la ciudad`, { type: ActivityType.Playing });
+  else client.user.setActivity(cfg.WEB.replace(/^https?:\/\//, ''), { type: ActivityType.Watching });
+}
+
+async function registrarComandos() {
+  try {
+    const guild = await client.guilds.fetch(GUILD_ID);
+    await guild.commands.set(comandos.definiciones);
+    console.log(`[comandos] ${comandos.definiciones.length} comandos registrados`);
+  } catch (err) {
+    console.error('[comandos] No se pudieron registrar. ¿El bot fue invitado con el permiso "applications.commands"?', err.message);
+  }
+}
+
 client.once(Events.ClientReady, async (c) => {
   console.log(`[bot] Conectado como ${c.user.tag}`);
-  await Promise.all([cargarAnuncios(), cargarStats()]);
+  await Promise.all([cargarAnuncios(), cargarStats(), registrarComandos()]);
   setInterval(cargarAnuncios, REFRESCO_ANUNCIOS_MS);
   setInterval(cargarStats, REFRESCO_STATS_MS);
+  actualizarEstado();
+  setInterval(actualizarEstado, 60 * 1000);
+  sorteos.iniciarReloj(client);
+  if (usaBienvenida) console.log('[bienvenida] Activada');
 });
 
 if (!DISCORD_TOKEN || !GUILD_ID || !ANUNCIOS_CHANNEL_ID) {
   console.warn('[bot] Faltan DISCORD_TOKEN, GUILD_ID o ANUNCIOS_CHANNEL_ID en .env. La web arranca igual, sin anuncios ni contador.');
 } else {
-  client.login(DISCORD_TOKEN).catch((err) => console.error('[bot] No se pudo iniciar sesión:', err.message));
+  client.login(DISCORD_TOKEN).catch((err) => {
+    console.error('[bot] No se pudo iniciar sesión:', err.message);
+    if (/disallowed intents/i.test(err.message)) {
+      console.error('[bot] Activá "Server Members Intent" en el portal de Discord (Bot > Privileged Gateway Intents), o borrá BIENVENIDA_CHANNEL_ID y AUTOROL_ID.');
+    }
+  });
 }
 
 // ---------- Web ----------
@@ -108,40 +149,6 @@ app.get('/api/discord', (req, res) => {
   if (!stats) return res.status(503).json({ error: 'El bot todavía no se conectó a Discord.' });
   res.json(stats);
 });
-// ---------- Roblox: jugadores en el juego ----------
-// Cada servidor del juego manda un "ping" cada 30 s con su cantidad de jugadores.
-// Un servidor que deja de avisar por más de 90 s se da por cerrado.
-const VENCE_SERVIDOR_MS = 90 * 1000;
-const servidores = new Map(); // jobId -> { jugadores, max, t }
-
-function servidoresActivos() {
-  const ahora = Date.now();
-  for (const [id, s] of servidores) if (ahora - s.t > VENCE_SERVIDOR_MS) servidores.delete(id);
-  return [...servidores.values()];
-}
-
-app.post('/api/roblox/ping', express.json({ limit: '2kb' }), (req, res) => {
-  if (!ROBLOX_KEY || req.get('x-avm-key') !== ROBLOX_KEY) return res.status(401).json({ error: 'Clave inválida' });
-  const { jobId, jugadores, max } = req.body || {};
-  if (typeof jobId !== 'string' || !jobId || jobId.length > 64) return res.status(400).json({ error: 'jobId inválido' });
-  if (!Number.isInteger(jugadores) || jugadores < 0 || jugadores > 700) return res.status(400).json({ error: 'jugadores inválido' });
-  if (jugadores === 0) servidores.delete(jobId); // el servidor se está cerrando
-  else if (servidores.has(jobId) || servidores.size < 500) {
-    servidores.set(jobId, { jugadores, max: Number.isInteger(max) ? max : null, t: Date.now() });
-  }
-  res.json({ ok: true });
-});
-
-app.get('/api/roblox', (req, res) => {
-  const activos = servidoresActivos();
-  res.json({
-    jugadores: activos.reduce((n, s) => n + s.jugadores, 0),
-    servidores: activos.length,
-    actualizado: new Date().toISOString(),
-  });
-});
-
-if (!ROBLOX_KEY) console.warn('[roblox] Falta ROBLOX_KEY en .env: el contador de jugadores no va a recibir datos.');
-
+roblox.rutas(app, ROBLOX_KEY);
 app.use(express.static(path.join(__dirname, 'web')));
 app.listen(PORT, () => console.log(`[web] http://localhost:${PORT}`));
