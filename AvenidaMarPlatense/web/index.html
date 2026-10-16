@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Avenida Mar Platense</title>
+<meta name="description" content="Avenida Mar Platense RP: Mar del Plata recreada en Roblox. Equipos, normas, anuncios y Discord.">
+<link rel="icon" href="img/logo.webp" type="image/webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700&family=Permanent+Marker&display=swap">
+<style>
+/* Layout: pantalla de carga estilo GTA a sangre completa, después bloques tipo "cartel de ruta" sobre asfalto nocturno de la costa */
+:root{
+  --asfalto:#11151c;      /* fondo */
+  --asfalto-2:#1a2029;    /* superficies */
+  --linea:#2a3240;        /* bordes */
+  --texto:#eef1f5;
+  --texto-2:#a6afbd;
+  --sol:#ec1c2b;          /* rojo AVM (del logo) */
+  --mar:#2fb3c9;          /* Atlántico */
+  --discord:#5865f2;
+  --f-display:"Anton","Impact","Arial Narrow Bold",sans-serif;
+  --f-tag:"Permanent Marker","Comic Sans MS",cursive;
+  --f-body:"Barlow","Segoe UI",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--asfalto);color:var(--texto);font-family:var(--f-body);font-size:17px;line-height:1.6}
+a{color:inherit}
+img{max-width:100%;display:block}
+:focus-visible{outline:3px solid var(--sol);outline-offset:3px}
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:20px}
+
+/* NAV */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(17,21,28,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--linea)}
+.nav .wrap{display:flex;align-items:center;gap:24px;min-height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--f-display);font-size:22px;letter-spacing:.02em;text-transform:uppercase;line-height:1}
+.brand .tag{font-family:var(--f-tag);color:var(--sol);font-size:15px;text-transform:none;transform:rotate(-4deg)}
+.nav ul{display:flex;gap:22px;list-style:none;margin:0 0 0 auto;padding:0}
+.nav ul a{text-decoration:none;font-weight:600;text-transform:uppercase;font-size:14px;letter-spacing:.08em;color:var(--texto-2)}
+.nav ul a:hover{color:var(--texto)}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:13px 22px;border-radius:4px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:15px;text-decoration:none;border:2px solid transparent;transition:transform .15s,background .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn svg{width:20px;height:20px;flex:none}
+.btn-sol{background:var(--sol);color:#fff}
+.logo-img{display:block;filter:drop-shadow(0 4px 14px rgba(0,0,0,.55))}
+.brand .logo-img{width:46px;height:46px}
+.hero-logo{width:clamp(120px,15vw,190px);margin:0 0 4px -14px}
+.btn-discord{background:var(--discord);color:#fff}
+.btn-ghost{border-color:var(--texto);color:var(--texto)}
+.btn-ghost:hover{background:var(--texto);color:var(--asfalto)}
+.nav .btn{padding:9px 16px;font-size:13px}
+@media (max-width:1040px){.nav ul{display:none}.nav .btn{margin-left:auto}}
+
+/* HERO: slideshow de pantallas de carga */
+/* slides y texto apilados en la misma celda: si el texto es más alto, el hero crece en vez de cortarlo */
+.hero{position:relative;overflow:hidden;background:#000;display:grid}
+.slides{position:relative;grid-area:1/1;width:100%;min-height:min(56.25vw,82vh)}
+.slides img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease;transform:scale(1.04)}
+.slides img.on{opacity:1;animation:kb 7s linear forwards}
+.slides img:first-child{opacity:1}
+@keyframes kb{from{transform:scale(1.04)}to{transform:scale(1.12)}}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,12,16,.92) 0%,rgba(10,12,16,.55) 45%,rgba(10,12,16,0) 75%),linear-gradient(0deg,var(--asfalto) 0%,rgba(17,21,28,0) 35%);pointer-events:none}
+.hero-copy{position:relative;z-index:2;grid-area:1/1;align-self:end;padding-block:48px 56px}
+.hero-copy .wrap{max-width:1180px}
+.eyebrow{font-family:var(--f-tag);color:var(--sol);font-size:clamp(18px,2.4vw,26px);transform:rotate(-2deg);display:inline-block;margin:0 0 6px}
+h1{font-family:var(--f-display);font-weight:400;text-transform:uppercase;font-size:clamp(44px,7.5vw,108px);line-height:.9;margin:0;letter-spacing:.005em;text-wrap:balance;max-width:12ch}
+h1 span{color:var(--sol)}
+.hero p.lead{max-width:44ch;color:#dfe4ea;font-size:clamp(16px,1.6vw,19px);margin:18px 0 26px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px}
+.dots{position:absolute;z-index:3;right:20px;bottom:24px;display:flex;gap:8px}
+.dots button{width:28px;height:4px;border:0;padding:0;background:rgba(255,255,255,.35);cursor:pointer;border-radius:2px}
+.dots button.on{background:var(--sol)}
+@media (max-width:700px){
+  .hero{display:flex;flex-direction:column}
+  .slides{height:56vw;min-height:0}
+  .hero::after{background:linear-gradient(0deg,var(--asfalto) 0%,rgba(17,21,28,0) 40%)}
+  .hero-copy{position:relative;padding-block:8px 32px}
+  .dots{top:calc(56vw - 20px);bottom:auto}
+}
+
+/* CINTA */
+.cinta{background:var(--sol);color:#fff;overflow:hidden;white-space:nowrap;border-block:3px solid #141414}
+.cinta div{display:inline-block;padding-block:10px;font-family:var(--f-display);font-size:22px;text-transform:uppercase;letter-spacing:.04em;animation:cinta 40s linear infinite}
+.cinta span{margin-inline:22px}
+@keyframes cinta{to{transform:translateX(-50%)}}
+
+/* SECCIONES */
+section{padding-block:88px;scroll-margin-top:40px}
+.sec-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px;margin-bottom:36px}
+h2{font-family:var(--f-display);font-weight:400;text-transform:uppercase;font-size:clamp(36px,5.5vw,64px);line-height:.95;margin:0;text-wrap:balance}
+h2 .tag{display:block;font-family:var(--f-tag);text-transform:none;color:var(--mar);font-size:.42em;margin-bottom:6px}
+.sec-head p{max-width:46ch;color:var(--texto-2);margin:0}
+
+/* LA CIUDAD: features */
+.feat{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+@media (max-width:1100px){.feat{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.feat{grid-template-columns:1fr}}
+.card{background:var(--asfalto-2);border:1px solid var(--linea);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.card img{aspect-ratio:16/9;object-fit:cover;object-position:center 60%;width:100%}
+.card .in{padding:20px 22px 24px}
+.card h3{font-family:var(--f-display);font-weight:400;text-transform:uppercase;font-size:26px;margin:0 0 6px;letter-spacing:.01em}
+.card p{margin:0;color:var(--texto-2);font-size:16px}
+.card .chip{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sol);margin-bottom:8px}
+
+/* VIDEO */
+.video{background:linear-gradient(180deg,var(--asfalto) 0%,#0b2a33 100%)}
+.player{position:relative;display:block;border-radius:6px;overflow:hidden;border:1px solid var(--linea);aspect-ratio:16/9;max-width:100%}
+.player img{width:100%;height:100%;object-fit:cover;filter:brightness(.6);transition:filter .2s,transform .4s}
+.player:hover img{filter:brightness(.75);transform:scale(1.02)}
+.play{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.play .circ{width:clamp(70px,10vw,104px);aspect-ratio:1;border-radius:50%;background:#ff0033;display:grid;place-items:center;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+.play .circ svg{width:40%;fill:#fff;margin-left:8%}
+.play b{display:block;margin-top:14px;font-family:var(--f-display);font-weight:400;font-size:clamp(20px,3vw,30px);text-transform:uppercase;letter-spacing:.03em}
+
+/* PASOS */
+.pasos{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;counter-reset:p}
+.paso{border-top:4px solid var(--sol);background:var(--asfalto-2);padding:24px 22px 26px;border-radius:0 0 6px 6px;min-width:0}
+.paso .n{font-family:var(--f-display);font-size:54px;line-height:1;color:var(--sol)}
+.paso h3{font-family:var(--f-display);font-weight:400;text-transform:uppercase;font-size:24px;margin:10px 0 6px}
+.paso p{margin:0 0 14px;color:var(--texto-2);font-size:16px}
+.paso a{font-weight:700;color:var(--sol);text-decoration:none;text-transform:uppercase;font-size:14px;letter-spacing:.08em}
+.paso a:hover{text-decoration:underline}
+
+/* GALERIA */
+.gal{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.gal button{padding:0;border:0;background:none;cursor:zoom-in;border-radius:4px;overflow:hidden;aspect-ratio:16/9}
+.gal button img{width:100%;height:100%;object-fit:cover;transition:transform .35s}
+.gal button:hover img{transform:scale(1.06)}
+.gal button:nth-child(1),.gal button:nth-child(6){grid-column:span 2;grid-row:span 2}
+@media (max-width:760px){.gal{grid-template-columns:repeat(2,1fr)}.gal button:nth-child(6){grid-column:span 2;grid-row:auto}}
+.lb{position:fixed;inset:0;z-index:100;background:rgba(5,6,8,.94);display:grid;place-items:center;padding:20px}
+.lb img{max-height:86vh;border-radius:4px}
+.lb button{position:absolute;background:none;border:0;color:#fff;font-size:42px;cursor:pointer;padding:10px 16px;line-height:1}
+.lb .x{top:calc(10px + env(safe-area-inset-top,0px));right:10px}
+.lb .prev{left:4px;top:50%;transform:translateY(-50%)}
+.lb .next{right:4px;top:50%;transform:translateY(-50%)}
+
+/* DISCORD CTA */
+.dc{position:relative;overflow:hidden;border-radius:8px;background:var(--discord);padding:56px clamp(22px,5vw,64px);display:grid;grid-template-columns:1.3fr 1fr;gap:32px;align-items:center}
+.dc h2{color:#fff}
+.dc p{color:#e6e8ff;max-width:42ch;margin:14px 0 24px}
+.dc .btn{background:#fff;color:var(--discord)}
+.dc .logo{justify-self:center;width:min(220px,60%);fill:rgba(255,255,255,.95);transform:rotate(-8deg)}
+@media (max-width:760px){.dc{grid-template-columns:1fr}.dc .logo{display:none}}
+
+/* EN VIVO (contador de Discord) */
+.live{display:inline-flex;align-items:center;gap:10px;margin:18px 0 0;padding:8px 14px;border-radius:999px;background:rgba(17,21,28,.7);border:1px solid var(--linea);font-size:15px;color:var(--texto-2);font-variant-numeric:tabular-nums}
+.live b{color:var(--texto)}
+.pulse{width:9px;height:9px;border-radius:50%;background:#3ddc84;box-shadow:0 0 0 0 rgba(61,220,132,.6);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(61,220,132,0)}100%{box-shadow:0 0 0 0 rgba(61,220,132,0)}}
+.dc-stats{display:flex;flex-wrap:wrap;gap:32px;margin:0 0 26px}
+.dc-stats div{display:flex;flex-direction:column}
+.dc-stats b{font-family:var(--f-display);font-weight:400;font-size:44px;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
+.dc-stats span{color:#e6e8ff;font-size:14px;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+
+/* ANUNCIOS */
+.anuncios{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;align-items:start}
+@media (max-width:760px){.anuncios{grid-template-columns:1fr}}
+.anuncio{background:var(--asfalto-2);border:1px solid var(--linea);border-radius:6px;padding:20px 22px;min-width:0}
+.anuncio:first-child{grid-column:1/-1;border-color:var(--sol)}
+.anuncio header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.anuncio header img{width:40px;height:40px;border-radius:50%;flex:none}
+.anuncio header div{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.anuncio header b{font-weight:700}
+.anuncio header time{color:var(--texto-2);font-size:13px}
+.anuncio header a{margin-left:auto;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--discord);text-decoration:none;white-space:nowrap}
+.anuncio header a:hover{text-decoration:underline}
+.anuncio-texto{overflow-wrap:anywhere;color:#d9dee6}
+.anuncio-texto p{margin:0 0 .6em}
+.anuncio-texto h4{font-family:var(--f-display);font-weight:400;text-transform:uppercase;font-size:24px;margin:0 0 .3em;color:var(--texto)}
+.anuncio-texto ul{margin:0 0 .6em;padding-left:20px}
+.anuncio-texto code{font-family:Consolas,"Courier New",monospace;background:var(--asfalto);padding:1px 5px;border-radius:3px}
+.anuncio-texto a{color:var(--mar)}
+.anuncio-texto .emoji{width:1.3em;height:1.3em;display:inline;vertical-align:-.25em}
+.anuncio-imgs{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:12px}
+.anuncio-imgs img{width:100%;border-radius:4px;max-height:420px;object-fit:cover}
+.anuncios-estado{grid-column:1/-1;margin:0;padding:28px;border:1px dashed var(--linea);border-radius:6px;color:var(--texto-2);text-align:center}
+.anuncios-estado a{color:var(--sol);font-weight:700}
+#anuncios-mas{margin-top:20px}
+
+/* EQUIPOS */
+.teams{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+@media (max-width:1100px){.teams{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:760px){.teams{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:480px){.teams{grid-template-columns:1fr}}
+.team{background:var(--asfalto-2);border:1px solid var(--linea);border-radius:6px;padding:20px 18px 22px;min-width:0;display:flex;flex-direction:column;gap:8px;transition:border-color .2s,transform .2s}
+.team:hover{border-color:var(--sol);transform:translateY(-3px)}
+.team .tipo{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--texto-2);display:flex;align-items:center;gap:7px}
+.team .tipo::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c,var(--texto-2))}
+.team h3{font-family:var(--f-display);font-weight:400;text-transform:uppercase;font-size:24px;line-height:1.05;margin:0}
+.team p{margin:0;color:var(--texto-2);font-size:15px;line-height:1.5}
+.t-civil{--c:#c9d1dc}.t-calle{--c:var(--sol)}.t-ley{--c:#4d8dff}.t-emerg{--c:#3ddc84}.t-serv{--c:#ffc22e}
+
+/* NORMAS */
+.normas{background:var(--asfalto-2);border-block:1px solid var(--linea)}
+.reglas{display:grid;grid-template-columns:repeat(2,1fr);gap:0 48px;counter-reset:r}
+@media (max-width:760px){.reglas{grid-template-columns:1fr}}
+.regla{display:grid;grid-template-columns:64px 1fr;gap:4px 18px;padding-block:22px;border-top:1px solid var(--linea);min-width:0}
+.regla .num{grid-row:span 2;font-family:var(--f-display);font-size:42px;line-height:1;color:var(--sol);font-variant-numeric:tabular-nums}
+.regla h3{margin:0;font-size:19px;font-weight:700;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.regla h3 abbr{font-family:var(--f-display);font-weight:400;font-size:24px;text-decoration:none;letter-spacing:.02em}
+.regla h3 small{font-size:14px;font-weight:500;color:var(--texto-2)}
+.regla p{margin:0;color:var(--texto-2);font-size:16px}
+.regla code{font-family:Consolas,"Courier New",monospace;background:var(--asfalto);border:1px solid var(--linea);padding:1px 6px;border-radius:3px;color:var(--texto);font-size:.92em}
+.regla ul{margin:6px 0 0;padding-left:18px;color:var(--texto-2);font-size:16px}
+
+/* FAQ */
+.faq{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;align-items:start}
+@media (max-width:760px){.faq{grid-template-columns:1fr}}
+.faq details{background:var(--asfalto-2);border:1px solid var(--linea);border-radius:6px;min-width:0}
+.faq details[open]{border-color:var(--sol)}
+.faq summary{cursor:pointer;list-style:none;padding:18px 52px 18px 20px;font-weight:700;font-size:17px;position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:20px;top:50%;transform:translateY(-50%);font-family:var(--f-display);font-size:26px;color:var(--sol);transition:transform .2s}
+.faq details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+.faq details p{margin:0;padding:0 20px 20px;color:var(--texto-2)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--linea);padding-block:36px;color:var(--texto-2);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;justify-content:space-between}
+footer nav{display:flex;gap:20px;flex-wrap:wrap}
+footer a{text-decoration:none}
+footer a:hover{color:var(--texto)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#inicio"><img class="logo-img" src="img/logo.webp" alt="">Avenida Mar Platense <span class="tag">RP</span></a>
+    <ul>
+      <li><a href="#ciudad">La ciudad</a></li>
+      <li><a href="#anuncios">Anuncios</a></li>
+      <li><a href="#equipos">Equipos</a></li>
+      <li><a href="#jugar">Cómo jugar</a></li>
+      <li><a href="#normas">Normas</a></li>
+      <li><a href="#galeria">Galería</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a class="btn btn-sol" href="https://www.roblox.com/es/games/18884953296/Villa-Marplatense-RolePlay" target="_blank" rel="noopener">Jugar</a>
+  </div>
+</header>
+
+<main id="inicio">
+  <div class="hero">
+    <div class="slides" id="slides">
+      <img src="img/10.png" alt="La Escollera Sur con el lobo marino al fondo">
+      <img src="img/1.png" alt="Mural de Aldosivi en Villa Vertiz">
+      <img src="img/8.png" alt="Edificio del Banco Provincia">
+      <img src="img/5.png" alt="Mural de Maradona">
+      <img src="img/3.png" alt="Monumento bajo la lluvia">
+      <img src="img/7.png" alt="Vista de Villa Atila y la ciudad al fondo">
+    </div>
+    <div class="dots" id="dots" aria-label="Elegir imagen"></div>
+    <div class="hero-copy">
+      <div class="wrap">
+        <img class="logo-img hero-logo" src="img/logo.webp" alt="Logo AVM">
+        <p class="eyebrow">RolePlay en Roblox · La Feliz</p>
+        <h1>Avenida <span>Mar Platense</span></h1>
+        <p class="lead">Mar del Plata recreada en Roblox: la Escollera, los murales del barrio, el Banco Provincia y la costa entera. Armá tu personaje, conseguí laburo o metete en el código de barrio.</p>
+        <div class="ctas">
+          <a class="btn btn-sol" href="https://www.roblox.com/es/games/18884953296/Villa-Marplatense-RolePlay" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Jugar en Roblox</a>
+          <a class="btn btn-discord" href="https://discord.gg/vVxQPSKRra" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3l-.6 1.3a18.4 18.4 0 0 0-5.6 0L8.6 3a19.7 19.7 0 0 0-4.9 1.4C.6 9 -.3 13.6.1 18.1a19.9 19.9 0 0 0 6 3l1.3-2a12.9 12.9 0 0 1-2-1l.5-.4a14.2 14.2 0 0 0 12.2 0l.5.4c-.6.4-1.3.7-2 1l1.3 2a19.8 19.8 0 0 0 6-3c.5-5.2-.8-9.7-3.6-13.7zM8 15.3c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4zm8 0c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4z"/></svg>Unite al Discord</a>
+        </div>
+        <p class="live" id="live-hero" hidden><span class="pulse" aria-hidden="true"></span><span><b data-online>–</b> en línea · <b data-miembros>–</b> miembros en Discord</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cinta" aria-hidden="true"><div>
+    <span>Escollera Sur</span>★<span>Villa Vertiz</span>★<span>Villa Atila</span>★<span>Barrio El Nawel</span>★<span>Muelle de Quilmes</span>★<span>Banco Provincia</span>★<span>Rastrero</span>★
+    <span>Escollera Sur</span>★<span>Villa Vertiz</span>★<span>Villa Atila</span>★<span>Barrio El Nawel</span>★<span>Muelle de Quilmes</span>★<span>Banco Provincia</span>★<span>Rastrero</span>★
+  </div></div>
+
+  <section id="anuncios">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span class="tag">Directo del Discord</span>Anuncios</h2>
+        <p>Lo que el staff publica en el canal de anuncios del Discord aparece acá automáticamente.</p>
+      </div>
+      <div class="anuncios" id="anuncios-lista"><p class="anuncios-estado">Cargando anuncios…</p></div>
+      <button class="btn btn-ghost" id="anuncios-mas" hidden>Ver anuncios anteriores</button>
+    </div>
+  </section>
+
+  <section id="ciudad" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span class="tag">Bienvenido a La Feliz</span>Una ciudad para vivir tu historia</h2>
+        <p>Cada rincón está hecho a mano y lleno de referencias marplatenses. Vos decidís si sos laburante, policía, comerciante o el que planea el próximo golpe.</p>
+      </div>
+      <div class="feat">
+        <article class="card">
+          <img src="img/8.png" alt="Banco Provincia" loading="lazy">
+          <div class="in"><span class="chip">Robos</span><h3>Golpe al Banco Provincia</h3><p>Armá la banda, planeá la entrada y robate toda la guita. La policía no se va a quedar quieta.</p></div>
+        </article>
+        <article class="card">
+          <img src="img/9.png" alt="Cartel del barrio Rastrero" loading="lazy">
+          <div class="in"><span class="chip">Barrios</span><h3>Código de barrio</h3><p>Rastrero, El Nawel, Villa Atila. Cada barrio tiene sus reglas: sordo, mudo y ciego.</p></div>
+        </article>
+        <article class="card">
+          <img src="img/1.png" alt="Mural de Aldosivi" loading="lazy">
+          <div class="in"><span class="chip">Cultura</span><h3>Murales y aguante</h3><p>Aldosivi en Villa Vertiz, Maradona, el Dibu y los murales que cualquier marplatense reconoce.</p></div>
+        </article>
+        <article class="card">
+          <img src="img/10.png" alt="Escollera Sur" loading="lazy">
+          <div class="in"><span class="chip">Costa</span><h3>La Escollera y el puerto</h3><p>Caminá la Escollera Sur con el lobo marino de fondo, o mirá el atardecer desde el Muelle de Quilmes.</p></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="equipos" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span class="tag">Elegí tu camino</span>Equipos</h2>
+        <p>Diez formas de vivir la ciudad. Podés arrancar como civil y después sumarte a la facción que quieras.</p>
+      </div>
+      <div class="teams">
+        <article class="team t-civil"><span class="tipo">Ciudadano</span><h3>Civil</h3><p>El vecino de La Feliz. Conseguí laburo, comprate auto y casa, y armá tu vida desde cero. Es el punto de partida de toda historia.</p></article>
+        <article class="team t-calle"><span class="tipo">Barrio</span><h3>Villero</h3><p>La vida en el barrio, con sus códigos y sus bandas. Negocios turbios, territorio y respeto. Acá rige el código: sordo, mudo y ciego.</p></article>
+        <article class="team t-ley"><span class="tipo">Seguridad</span><h3>Policía Bonaerense</h3><p>Patrulla las calles, hace controles, atiende denuncias y sale a las persecuciones. La primera línea contra el delito.</p></article>
+        <article class="team t-ley"><span class="tipo">Seguridad</span><h3>Policía Federal</h3><p>Se encarga de los casos grandes: robos a bancos, narcotráfico e investigaciones. Operativos especiales con más equipamiento.</p></article>
+        <article class="team t-ley"><span class="tipo">Seguridad</span><h3>Prefectura Naval</h3><p>Controla la costa, el puerto y la Escollera. Rescates en el mar, control de embarcaciones y contrabando por agua.</p></article>
+        <article class="team t-ley"><span class="tipo">Seguridad</span><h3>Patrulla Municipal</h3><p>Ordena el tránsito, labra multas y mantiene el orden en la vía pública. Si estacionás mal, te van a encontrar.</p></article>
+        <article class="team t-emerg"><span class="tipo">Emergencias</span><h3>SAME</h3><p>Ambulancias y atención médica de urgencia. Llegan a cada accidente y tiroteo para salvar vidas y llevar heridos al hospital.</p></article>
+        <article class="team t-serv"><span class="tipo">Servicio</span><h3>Periodista</h3><p>Cubrí lo que pasa en la ciudad: entrevistas, móviles en vivo y notas. Sos los ojos de La Feliz.</p></article>
+        <article class="team t-serv"><span class="tipo">Servicio</span><h3>Tachero</h3><p>Al volante del taxi negro y amarillo. Llevá pasajeros de punta a punta, del centro al puerto, y enterate de todo en el viaje.</p></article>
+        <article class="team t-serv"><span class="tipo">Servicio</span><h3>Colectivero</h3><p>Manejá el bondi y cumplí el recorrido de la línea. Paradas, horarios y pasajeros de todo tipo.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="video" class="video">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span class="tag">Mirá el tráiler</span>Así se vive la ciudad</h2>
+        <p>Un recorrido por los lugares del mapa. Se abre en YouTube.</p>
+      </div>
+      <a class="player" href="https://www.youtube.com/watch?v=BbG240Bjl7c" target="_blank" rel="noopener" aria-label="Ver el tráiler en YouTube">
+        <img src="img/4.png" alt="" loading="lazy">
+        <span class="play"><span><span class="circ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3v18l16-9z"/></svg></span><b>Ver tráiler</b></span></span>
+      </a>
+    </div>
+  </section>
+
+  <section id="jugar">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span class="tag">Arrancá hoy</span>Cómo empezar a jugar</h2>
+        <p>Cuatro pasos y ya estás en la ciudad.</p>
+      </div>
+      <div class="pasos">
+        <div class="paso"><div class="n">1</div><h3>Unite al Discord</h3><p>Ahí están los anuncios, el soporte y la comunidad.</p><a href="https://discord.gg/vVxQPSKRra" target="_blank" rel="noopener">Entrar al Discord →</a></div>
+        <div class="paso"><div class="n">2</div><h3>Leé las normas</h3><p>Diez reglas básicas para que el rol funcione para todos. Leelas antes de entrar.</p><a href="#normas">Ver normas →</a></div>
+        <div class="paso"><div class="n">3</div><h3>Entrá en Roblox</h3><p>Abrí el juego desde la página oficial y tocá Jugar.</p><a href="https://www.roblox.com/es/games/18884953296/Villa-Marplatense-RolePlay" target="_blank" rel="noopener">Abrir en Roblox →</a></div>
+        <div class="paso"><div class="n">4</div><h3>Creá tu personaje</h3><p>Elegí quién vas a ser y empezá tu historia en La Feliz.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="normas" class="normas">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span class="tag">Leelas antes de entrar</span>Normas del servidor</h2>
+        <p>Romper estas reglas puede llevar a advertencias, sanciones temporales o ban, según la gravedad.</p>
+      </div>
+      <div class="reglas">
+        <div class="regla"><span class="num">01</span><h3><abbr>RDM</abbr><small>Random Deathmatch</small></h3><p>Prohibido matar o intentar matar sin un motivo válido de rol. No se puede atacar "porque sí", por bronca OOC o para molestar. Siempre debe existir contexto, historia y coherencia previa dentro del rol.</p></div>
+        <div class="regla"><span class="num">02</span><h3><abbr>CK</abbr><small>Character Kill</small></h3><p>Es la muerte permanente del personaje. Al aplicarse, tu personaje pierde todo: historia, bienes y relaciones. Solo se realiza en situaciones muy justificadas y, por lo general, con aprobación del staff o dirección de rol.</p></div>
+        <div class="regla"><span class="num">03</span><h3><abbr>BD</abbr><small>Bad Driving</small></h3><p>Conducir de forma irreal o troll: chocar a propósito, esquivar todo a 300 km/h sin consecuencias, manejar destruido sin rolear daños o conducir como en GTA. Si chocás fuerte o recibís impactos, debés rolear las consecuencias.</p></div>
+        <div class="regla"><span class="num">04</span><h3><abbr>PG</abbr><small>Power Gaming</small></h3><p>Forzar acciones imposibles o irreales sin dar opción al otro jugador. Ejemplos: romper esposas con fuerza "porque sí", levantar autos a mano, escapar con 10 tiros en el pecho o rolear que siempre ganás. Todo debe ser humano y realista.</p></div>
+        <div class="regla"><span class="num">05</span><h3><abbr>RK</abbr><small>Revenge Kill</small></h3><p>Si morís, no podés volver a la escena a vengarte o seguir el rol como si nada. Tu personaje pierde los recuerdos del rol anterior.</p></div>
+        <div class="regla"><span class="num">06</span><h3>Bait en general</h3><p>No generes situaciones solo para iniciar tiroteos o persecuciones sin rol previo. El rol debe surgir naturalmente.</p></div>
+        <div class="regla"><span class="num">07</span><h3>Interrupción de roles</h3><p>No interrumpas escenas ajenas sin motivo de rol válido. Observá primero y respetá el rol de los demás.</p></div>
+        <div class="regla"><span class="num">08</span><h3>Uso del comando <code>!Help</code></h3><p>Usalo para pedir ayuda al staff cuando haya problemas reales de rol o bugs serios. El mal uso o abuso de <code>!Help</code> (spam, bromas, molestias) puede llevar a sanciones.</p></div>
+        <div class="regla"><span class="num">09</span><h3>Uso de <code>/accion</code> y <code>/pensamiento</code></h3><ul><li><code>/accion</code> describe lo que hace tu personaje, de forma realista y sin forzar al otro.</li><li><code>/pensamiento</code> muestra lo que tu personaje piensa. Los demás no lo saben en rol.</li></ul></div>
+        <div class="regla"><span class="num">10</span><h3>Respeto al staff</h3><p>El staff está para ordenar el rol. Sus decisiones deben acatarse. Si no estás de acuerdo, realizá una apelación por los medios correspondientes.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="galeria">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span class="tag">Muchas vistas únicas</span>Galería</h2>
+        <p>Capturas tomadas dentro del juego. Tocá una para verla grande.</p>
+      </div>
+      <div class="gal" id="gal">
+        <button><img src="img/1.png" alt="Yo soy de Aldosivi y te vengo a alentar" loading="lazy"></button>
+        <button><img src="img/2.png" alt="Muelle de Quilmes" loading="lazy"></button>
+        <button><img src="img/3.png" alt="2020 - infinito" loading="lazy"></button>
+        <button><img src="img/4.png" alt="Dibu Martínez, orgullo marplatense" loading="lazy"></button>
+        <button><img src="img/5.png" alt="La pelota no se mancha" loading="lazy"></button>
+        <button><img src="img/6.png" alt="Golpe de suerte" loading="lazy"></button>
+        <button><img src="img/7.png" alt="Muchas vistas únicas" loading="lazy"></button>
+        <button><img src="img/8.png" alt="Robate toda la guita del Banco Provincia" loading="lazy"></button>
+        <button><img src="img/9.png" alt="Código de barrio: sordo, mudo y ciego" loading="lazy"></button>
+        <button><img src="img/10.png" alt="Mi querida Escollera Sur" loading="lazy"></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span class="tag">Dudas comunes</span>Preguntas frecuentes</h2>
+        <p>Si no encontrás tu respuesta, preguntá en el Discord.</p>
+      </div>
+      <div class="faq">
+        <details open><summary>¿Qué es Avenida Mar Platense?</summary><p>Es la comunidad oficial del juego en Discord. Para unirte, entrá al Discord que está debajo de la descripción del juego en Roblox y seguí el enlace, o usá el botón de esta página.</p></details>
+        <details><summary>¿Necesito experiencia para jugar?</summary><p>No, pueden entrar principiantes. Con que respetes las reglas y tengas ganas de rolear, alcanza.</p></details>
+        <details><summary>¿Qué es el roleplay?</summary><p>El roleplay consiste en interpretar un personaje y rolear situaciones como en la vida real, respetando reglas y coherencia.</p></details>
+        <details><summary>¿Hay actualizaciones del juego?</summary><p>Sí, el juego recibe actualizaciones cada tanto, agregando contenido nuevo y corrigiendo errores.</p></details>
+        <details><summary>¿Cómo pido ayuda dentro del juego?</summary><p>Podés usar el comando !Help para contactar al staff y explicar tu problema.</p></details>
+        <details><summary>¿Qué pasa si no respeto las reglas?</summary><p>Podés recibir advertencias, sanciones temporales o ban, según la gravedad del caso.</p></details>
+        <details><summary>¿Qué es IC? (In Character)</summary><p>IC es dentro del personaje. Todo lo que decís o hacés es parte del rol y pertenece al mundo del juego.</p></details>
+        <details><summary>¿Qué es OOC? (Out Of Character)</summary><p>OOC es fuera del personaje. Son comentarios reales, fuera del rol. No deben mezclarse con lo que pasa en el juego.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="dc">
+        <div>
+          <h2>La comunidad está en Discord</h2>
+          <p>Anuncios, eventos, postulaciones a facciones y soporte. Entrá, presentate y nos vemos en la ciudad.</p>
+          <div class="dc-stats" id="live-dc" hidden>
+            <div><b data-miembros>–</b><span>Miembros</span></div>
+            <div><b data-online>–</b><span>En línea ahora</span></div>
+          </div>
+          <a class="btn" href="https://discord.gg/vVxQPSKRra" target="_blank" rel="noopener">Unirme al servidor</a>
+        </div>
+        <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3l-.6 1.3a18.4 18.4 0 0 0-5.6 0L8.6 3a19.7 19.7 0 0 0-4.9 1.4C.6 9 -.3 13.6.1 18.1a19.9 19.9 0 0 0 6 3l1.3-2a12.9 12.9 0 0 1-2-1l.5-.4a14.2 14.2 0 0 0 12.2 0l.5.4c-.6.4-1.3.7-2 1l1.3 2a19.8 19.8 0 0 0 6-3c.5-5.2-.8-9.7-3.6-13.7zM8 15.3c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4zm8 0c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4z"/></svg>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <img class="logo-img" src="img/logo.webp" alt="AVM" style="width:56px;height:56px">
+    <span>© 2026 Avenida Mar Platense RP · Juego de Roblox, sin relación con Rockstar Games.</span>
+    <nav>
+      <a href="https://www.roblox.com/es/games/18884953296/Villa-Marplatense-RolePlay" target="_blank" rel="noopener">Roblox</a>
+      <a href="https://discord.gg/vVxQPSKRra" target="_blank" rel="noopener">Discord</a>
+      <a href="https://www.youtube.com/watch?v=BbG240Bjl7c" target="_blank" rel="noopener">YouTube</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="lb" id="lb" hidden>
+  <button class="x" aria-label="Cerrar">×</button>
+  <button class="prev" aria-label="Anterior">‹</button>
+  <img id="lbimg" alt="">
+  <button class="next" aria-label="Siguiente">›</button>
+</div>
+
+<script>
+(function(){
+  // Slideshow del hero
+  var imgs=[].slice.call(document.querySelectorAll('#slides img')),dots=document.getElementById('dots'),i=0,t;
+  imgs.forEach(function(_,k){var b=document.createElement('button');b.setAttribute('aria-label','Imagen '+(k+1));b.onclick=function(){go(k);start()};dots.appendChild(b)});
+  function go(k){imgs[i].classList.remove('on');dots.children[i].classList.remove('on');i=(k+imgs.length)%imgs.length;imgs[i].classList.add('on');dots.children[i].classList.add('on')}
+  function start(){clearInterval(t);if(!matchMedia('(prefers-reduced-motion: reduce)').matches)t=setInterval(function(){go(i+1)},6000)}
+  imgs[0].classList.add('on');dots.children[0].classList.add('on');start();
+
+  // Lightbox de galería
+  var g=[].slice.call(document.querySelectorAll('#gal img')),lb=document.getElementById('lb'),li=document.getElementById('lbimg'),c=0;
+  function show(k){c=(k+g.length)%g.length;li.src=g[c].src;li.alt=g[c].alt;lb.hidden=false}
+  g.forEach(function(im,k){im.parentNode.onclick=function(){show(k)}});
+  lb.querySelector('.x').onclick=function(){lb.hidden=true};
+  lb.querySelector('.prev').onclick=function(e){e.stopPropagation();show(c-1)};
+  lb.querySelector('.next').onclick=function(e){e.stopPropagation();show(c+1)};
+  lb.onclick=function(e){if(e.target===lb)lb.hidden=true};
+  document.addEventListener('keydown',function(e){if(lb.hidden)return;if(e.key==='Escape')lb.hidden=true;if(e.key==='ArrowLeft')show(c-1);if(e.key==='ArrowRight')show(c+1)});
+})();
+
+// ---------- Datos del bot de Discord ----------
+// Si la página se aloja en otro dominio que el bot, poné acá la dirección del bot, ej: 'https://avm-bot.up.railway.app'
+var API = '';
+var DISCORD = 'https://discord.gg/vVxQPSKRra';
+
+(function(){
+  var num = new Intl.NumberFormat('es-AR');
+
+  function cargarContador(){
+    fetch(API + '/api/discord').then(function(r){ if(!r.ok) throw r; return r.json(); }).then(function(d){
+      document.querySelectorAll('[data-miembros]').forEach(function(el){ el.textContent = num.format(d.miembros); });
+      document.querySelectorAll('[data-online]').forEach(function(el){ el.textContent = num.format(d.enLinea); });
+      document.getElementById('live-hero').hidden = false;
+      document.getElementById('live-dc').hidden = false;
+    }).catch(function(){ /* sin bot: se ocultan los contadores */ });
+  }
+
+  // Markdown básico de Discord -> HTML seguro
+  function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function inline(s){
+    return s
+      .replace(/&lt;(a?):(\w+):(\d+)&gt;/g, function(_,a,n,id){ return '<img class="emoji" alt=":'+n+':" src="https://cdn.discordapp.com/emojis/'+id+(a?'.gif':'.webp')+'?size=48">'; })
+      .replace(/`([^`]+)`/g,'<code>$1</code>')
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/__(.+?)__/g,'<u>$1</u>')
+      .replace(/(^|[^*])\*(?!\s)(.+?)\*/g,'$1<em>$2</em>')
+      .replace(/~~(.+?)~~/g,'<s>$1</s>')
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
+      .replace(/(^|[\s(])(https?:\/\/[^\s<]+)/g,'$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+  }
+  function md(texto){
+    var out = [], lista = null, parrafo = [];
+    function cerrarParrafo(){ if(parrafo.length){ out.push('<p>'+parrafo.join('<br>')+'</p>'); parrafo = []; } }
+    function cerrarLista(){ if(lista){ out.push('<ul>'+lista.join('')+'</ul>'); lista = null; } }
+    esc(texto).split('\n').forEach(function(l){
+      var h = l.match(/^#{1,3}\s+(.*)/), li = l.match(/^\s*[-*]\s+(.*)/);
+      if(h){ cerrarParrafo(); cerrarLista(); out.push('<h4>'+inline(h[1])+'</h4>'); }
+      else if(li){ cerrarParrafo(); (lista = lista || []).push('<li>'+inline(li[1])+'</li>'); }
+      else if(!l.trim()){ cerrarParrafo(); cerrarLista(); }
+      else { cerrarLista(); parrafo.push(inline(l)); }
+    });
+    cerrarParrafo(); cerrarLista();
+    return out.join('');
+  }
+
+  var rtf = new Intl.RelativeTimeFormat('es', { numeric: 'auto' });
+  function hace(iso){
+    var s = (new Date(iso) - Date.now()) / 1000, pasos = [[60,'second'],[60,'minute'],[24,'hour'],[7,'day'],[4.35,'week'],[12,'month'],[Infinity,'year']];
+    for (var i = 0; i < pasos.length; i++){ if (Math.abs(s) < pasos[i][0]) return rtf.format(Math.round(s), pasos[i][1]); s /= pasos[i][0]; }
+  }
+
+  var lista = document.getElementById('anuncios-lista'), mas = document.getElementById('anuncios-mas'), todos = [], mostrados = 5;
+
+  function tarjeta(a){
+    var fecha = new Date(a.fecha);
+    return '<article class="anuncio"><header>'
+      + '<img src="'+esc(a.avatar)+'" alt="" loading="lazy">'
+      + '<div><b>'+esc(a.autor)+'</b><time datetime="'+a.fecha+'" title="'+fecha.toLocaleString('es-AR')+'">'+hace(a.fecha)+(a.editado?' · editado':'')+'</time></div>'
+      + '<a href="'+esc(a.link)+'" target="_blank" rel="noopener">Ver en Discord</a></header>'
+      + (a.texto ? '<div class="anuncio-texto">'+md(a.texto)+'</div>' : '')
+      + (a.imagenes.length ? '<div class="anuncio-imgs">'+a.imagenes.map(function(u){ return '<img src="'+esc(u)+'" alt="Imagen del anuncio" loading="lazy">'; }).join('')+'</div>' : '')
+      + '</article>';
+  }
+  function pintar(){
+    lista.innerHTML = todos.length
+      ? todos.slice(0, mostrados).map(tarjeta).join('')
+      : '<p class="anuncios-estado">Todavía no hay anuncios publicados.</p>';
+    mas.hidden = todos.length <= mostrados;
+  }
+  mas.onclick = function(){ mostrados += 6; pintar(); };
+
+  function cargarAnuncios(){
+    fetch(API + '/api/anuncios').then(function(r){ if(!r.ok) throw r; return r.json(); }).then(function(d){
+      todos = d.anuncios || []; pintar();
+    }).catch(function(){
+      if (todos.length) return; // si ya había anuncios, se dejan los que están
+      lista.innerHTML = '<p class="anuncios-estado">No pudimos cargar los anuncios en este momento. Mirá las novedades en el <a href="'+DISCORD+'" target="_blank" rel="noopener">canal de anuncios del Discord</a>.</p>';
+    });
+  }
+
+  cargarContador(); cargarAnuncios();
+  setInterval(cargarContador, 5 * 60 * 1000);
+  setInterval(cargarAnuncios, 2 * 60 * 1000);
+})();
+</script>
+</body>
+</html>
